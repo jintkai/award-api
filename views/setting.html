@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>setting</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<script type="application/javascript" src="static/js/jquery.js"></script>
+		<script type="application/javascript" src="static/js/bootstrap.js"></script>
+		<link rel="stylesheet" href="static/css/bootstrap.min.css" type="text/css"/>
+	</head>
+	<body>
+	{{range $key, $val := .types}}
+		<form action="/updateConfig?id={{$val}}" method="POST" class="form form-inline" id="{{$val}}">
+                <div class="form-group" >
+                    <label>{{index $.Names $key}}</label>
+                    <input id="{{$val}}_total" name="{{$val}}_total" class="total form-control" placeholder="总个数" value="" />
+                    <input id="{{$val}}_per" name="{{$val}}_per" class="per form-control" placeholder="每次抽取个数" />
+                    <input name="{{$val}}_list" class="form-control" disabled="false" type="text"/>
+                </div>
+			<button class="btn-lg" onclick="updateConfig({{$val}})">提交</button>
+		</form>
+	{{end}}
+
+</body>
+<script type="application/javascript">
+	$(function(){
+
+		var formdiv = document.getElementsByTagName("form")
+		for (i=0;i<formdiv.length;i++){
+			id = formdiv[i].getAttribute("id");
+            getConfigById(id);
+		}
+	})
+
+	function getConfigById(id){
+        $.ajax({
+            url: "/getConfig?id="+id,
+            dataType: "json",
+            success: function(data) {
+                var temp = new Array();
+                temp = data[0].split(",")
+
+                console.log($("#"+id+"_total"));
+                $("#"+id+"_total").attr("value",temp[0]);
+                $("#"+id+"_per").attr("value",temp[1]);
+
+            }
+        });
+	}
+	function updateConfig(id){
+        $.ajax({
+            url: "/updateConfig?id="+id,
+			method:"post",
+            dataType: "json",
+            success: function(data) {
+               console.log("success")
+            }
+        });
+	}
+</script>
+</html>
